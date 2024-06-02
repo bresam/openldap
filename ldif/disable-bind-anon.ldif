@@ -1,0 +1,14 @@
+dn: cn=config
+changetype: modify
+replace: olcDisallows
+olcDisallows: bind_anon
+
+dn: cn=config
+changetype: modify
+replace: olcRequires
+olcRequires: authc
+
+dn: olcDatabase={-1}frontend,cn=config
+changetype: modify
+replace: olcRequires
+olcRequires: authc

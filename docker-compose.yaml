@@ -1,0 +1,55 @@
+services:
+  openldap-extended:
+    build: .
+    #    image: bresam/openldap:latest
+    environment:
+      LDAP_ADMIN_USERNAME: "admin"
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_ROOT: "dc=example,dc=com"
+      LDAP_ADMIN_DN: "cn=admin,dc=example,dc=com"
+      LDAP_CONFIG_ADMIN_ENABLED: "yes"
+      LDAP_CONFIG_ADMIN_USERNAME: "admin"
+      LDAP_CONFIG_ADMIN_PASSWORD: "admin"
+      LDAP_ENABLE_TLS: "no"
+      LDAP_PASSWORD_HASH: "{SSHA}"
+      LDAP_CONFIGURE_PPOLICY: "yes"
+      LDAP_PPOLICY_HASH_CLEARTEXT: "yes"
+      LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis,disable-bind-anon,openssh-lpk,memberof"
+      LDAP_USERS: "user"
+      LDAP_PASSWORDS: "user"
+    ports:
+      - "1389:1389"
+      - "1636:1636" # SSL/TLS
+
+  openldap-bitnami:
+    image: bitnami/openldap:latest
+    environment:
+      LDAP_ADMIN_USERNAME: "admin"
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_ROOT: "dc=example,dc=com"
+      LDAP_ADMIN_DN: "cn=admin,dc=example,dc=com"
+      LDAP_CONFIG_ADMIN_ENABLED: "yes"
+      LDAP_CONFIG_ADMIN_USERNAME: "admin"
+      LDAP_CONFIG_ADMIN_PASSWORD: "admin"
+      LDAP_PASSWORD_HASH: "{SSHA}"
+      LDAP_CONFIGURE_PPOLICY: "yes"
+      LDAP_PPOLICY_HASH_CLEARTEXT: "yes"
+      LDAP_EXTRA_SCHEMAS: "cosine,inetorgperson,nis"
+      LDAP_USERS: "user"
+      LDAP_PASSWORDS: "user"
+    ports:
+      - "2389:1389"
+      - "2636:1636" # SSL/TLS
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    depends_on:
+      - openldap-bitnami
+      - openldap-extended
+    environment:
+      VIRTUAL_HOST: ldap.test
+      VIRTUAL_PORT: 80
+      PHPLDAPADMIN_HTTPS: "false"
+      PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'1 openldap-extended (unsecure)': [{'server': [{'tls': False}, {'host': 'openldap-extended'}, {'port': '1389'}]},{'login': [{'bind_id': 'cn=admin,dc=example,dc=com'}]}]}, {'2 openldap-extended (tls)': [{'server': [{'tls': True}, {'host': 'openldap-extended'}, {'port': '1636'}]},{'login': [{'bind_id': 'cn=admin,dc=example,dc=com'}]}]}, {'3 openldap-bitnami (unsecure)': [{'server': [{'tls': False}, {'host': 'openldap-bitnami'}, {'port': '1389'}]},{'login': [{'bind_id': 'cn=admin,dc=example,dc=com'}]}]}, {'4 openldap-bitnami (tls)': [{'server': [{'tls': True}, {'host': 'openldap-bitnami'}, {'port': '1636'}]},{'login': [{'bind_id': 'cn=admin,dc=example,dc=com'}]}]}]"
+    ports:
+      - 8080:80
