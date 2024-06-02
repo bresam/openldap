@@ -6,6 +6,10 @@ An extended variant of bitnami/openldap |
 
 **Easy configurable _disable_anon_bind_, _memberOf_ and _openssh-lpk_**
 
+You can find this project on
+[github](https://github.com/bresam/openldap) and
+[docker hub](https://hub.docker.com/r/bresam/openldap)
+
 ---
 
 ## Changes
@@ -91,4 +95,5 @@ ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config dn
 ### memberOf
 
 https://technicalnotes.wordpress.com/2014/04/19/openldap-setup-with-memberof-overlay/
+
 https://www.adimian.com/blog/how-to-enable-memberof-using-openldap/
